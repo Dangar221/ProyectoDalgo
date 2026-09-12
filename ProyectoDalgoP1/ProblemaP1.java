@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
+import java.util.PriorityQueue;
 
 public class ProblemaP1 {
 
@@ -22,6 +24,24 @@ public class ProblemaP1 {
         public Arista(int destino, int peso) {
             this.destino = destino;
             this.peso = peso;
+        }
+    }
+
+    //clase auxiliar para representar un nodo en la cola de prioridad
+    static class nodoDijkstra implements Comparable<nodoDijkstra> {
+        int nodo;
+        long distancia; //menor distancia conocida desde el nodo inicial
+
+        public nodoDijkstra(int nodo, long distancia) {
+            this.nodo = nodo;
+            this.distancia = distancia;
+        }
+
+        // define como se comparan dos nodos en la PQ, compara las distancias para que la menor quede primero
+        // priority queue la usa para ordenarlos
+        @Override
+        public int compareTo(nodoDijkstra otro) {
+            return Long.compare(this.distancia, otro.distancia);
         }
     }
 
@@ -75,7 +95,32 @@ public class ProblemaP1 {
     }
 
     public long dijkstra(List<List<Arista>> grafo, int nodoInicio, int nodoDestino, int totalNodos) {
-        // TODO
-        return 0;
+        long[] distancias = new long[totalNodos]; // guarda el menor costo conocido desde el nodo inicial a cada nodo
+        Arrays.fill(distancias, Long.MAX_VALUE); //todas las distancias como inifinito porque no sabemos el camino aun
+        boolean[] visitado = new boolean[totalNodos]; 
+        PriorityQueue<nodoDijkstra> minheap = new PriorityQueue<>(); //cola de prioridad para escoger el nodo con menor distancia conocida
+        distancias[nodoInicio] = 0;
+        minheap.add(new nodoDijkstra(nodoInicio, 0));
+
+        while(!minheap.isEmpty() && visitado[nodoDestino] == false) { //recorrer mientras la cola no este vacia y no hayamos visitado el destino
+            nodoDijkstra actual = minheap.poll(); //extraer el nodo con menor distancia conocida
+            int nodoActual = actual.nodo;
+            if (!visitado[nodoActual]) { //procesa el nodo solo si no ha sido visitado
+                visitado[nodoActual] = true; 
+            for (Arista arista : grafo.get(nodoActual)) {
+                int vecino = arista.destino;
+                long nuevaDistancia = distancias[nodoActual] + arista.peso; //costo de llegar al vecino pasando por el nodo actual
+
+                if (nuevaDistancia < distancias[vecino]) { //si encontramos un camino mas corto al vecino
+                    distancias[vecino] = nuevaDistancia; 
+                    minheap.add(new nodoDijkstra(vecino, nuevaDistancia)); //agregar otra vez al vecino con su distancia nueva
+                                                                        //al usar minheap siempre se procesa el nodo con menor distancia primero
+                }
+
+            }   
+        }
+    }
+        return distancias[nodoDestino]; //la menor distancia conocida al  destino
     }
 }
+
