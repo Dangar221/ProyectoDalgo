@@ -101,7 +101,7 @@ public class ProblemaP1 {
             portales[i][2] = Integer.parseInt(tokens[2]); // xe
             portales[i][3] = Integer.parseInt(tokens[3]); // ye
         }
-        return
+        return portales;
     }
 
     public List<List<Arista>> construirGrafo(int numeroOrbitas, int numeroPosiciones, int[] energiaOrbita, int[][] portales) {
