@@ -1,5 +1,5 @@
 // Autores:
-//   Gabriela Campos - 
+//   Gabriela Campos - 202410122
 //   Danna Garcia - 202320823
 //   Jose Manuel - 202422442
 //
@@ -46,21 +46,62 @@ public class ProblemaP1 {
     }
 
     public static void main(String[] args) throws Exception {
-        // TODO
+        BufferedReader lectorLineas = new BufferedReader(new InputStreamReader(System.in));
+        int casosDePrueba = Integer.parseInt(lectorLineas.readLine().trim());
+
+        ProblemaP1 solucion = new ProblemaP1();
+        StringBuilder salida = new StringBuilder();
+
+        for(int i = 0; i < casosDePrueba; i++){
+            String respuesta = solucion.resolverCaso(lectorLineas);
+            salida.append(respuesta).append("\n");
+        }
+        System.out.print(salida);
     }
 
-    public void resolverCaso(BufferedReader lectorLineas) throws Exception {
-        // TODO
+    public String resolverCaso(BufferedReader lectorLineas) throws Exception {
+        String[] primeraLinea = lectorLineas.readLine().split(" ");
+        int n = Integer.parseInt(primeraLinea[0]); // numeroOrbitas
+        int m = Integer.parseInt(primeraLinea[1]); // numeroPosiciones
+        int p = Integer.parseInt(primeraLinea[2]); // numeroPortales
+
+        int[] energias = leerEnergiasOrbitas(lectorLineas, n);
+        int[][] portales = leerPortales(lectorLineas, p);
+        List<List<Arista>> grafo = construirGrafo(n, m, energias, portales);
+
+        int totalNodos = n*m;
+        int nodoInicio = calcularNumeroNodo(1, 1, m);
+        int nodoDestino = calcularNumeroNodo(n, m, m);
+
+        long resultado = dijkstra(grafo, nodoInicio, nodoDestino, totalNodos);
+
+        if(resultado == Long.MAX_VALUE){
+            return "NO EXISTE";
+        } else{
+            return String.valueOf(resultado);
+        }
+
     }
 
     public int[] leerEnergiasOrbitas(BufferedReader lectorLineas, int numeroOrbitas) throws Exception {
-        // TODO
-        return null;
+        String[] tokens = lectorLineas.readLine().split(" ");
+        int[] energias = new int[numeroOrbitas];
+        for(int i = 0; i < numeroOrbitas; i++){
+            energias[i] = Integer.parseInt(tokens[i]);
+        }
+        return energias;
     }
 
     public int[][] leerPortales(BufferedReader lectorLineas, int numeroPortales) throws Exception {
-        // TODO
-        return null;
+        int[][] portales = new int[numeroPortales][4];
+        for(int i = 0; i < numeroPortales; i++){
+            String[] tokens = lectorLineas.readLine().split(" ");
+            portales[i][0] = Integer.parseInt(tokens[0]); // xs
+            portales[i][1] = Integer.parseInt(tokens[1]); // ys
+            portales[i][2] = Integer.parseInt(tokens[2]); // xe
+            portales[i][3] = Integer.parseInt(tokens[3]); // ye
+        }
+        return
     }
 
     public List<List<Arista>> construirGrafo(int numeroOrbitas, int numeroPosiciones, int[] energiaOrbita, int[][] portales) {
